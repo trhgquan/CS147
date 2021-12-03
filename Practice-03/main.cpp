@@ -1,3 +1,9 @@
+/**
+ * @file main.cpp
+ * @author trhgquan https://github.com/trhgquan
+ * @date 2021-12-03
+ */
+
 #include<bits/stdc++.h>
 #define longint int64_t
 using namespace std;
@@ -8,6 +14,11 @@ private:
     bool _seed = false;
 
 public:
+    /**
+     * @brief Genereate a random T-type.
+     * 
+     * @return T 
+     */
     T randomInt() {
         if (!_seed) {
             srand(time(NULL));
@@ -17,10 +28,23 @@ public:
         return rand();
     }
 
+    /**
+     * @brief Generate a random T-type in range [0, right - 1]
+     * 
+     * @param right Right edge of the interval [0, n)
+     * @return T 
+     */
     T randomInt(T right) {
         return randomInt() % right;
     }
 
+    /**
+     * @brief Generate a random T-type in range [left, right]
+     * 
+     * @param left Left edge
+     * @param right Right edge
+     * @return T 
+     */
     T randomInt(T left, T right) {
         return (randomInt() % (left - right + 1)) + left;
     }
@@ -35,6 +59,11 @@ private:
     map<longint, double> _table;
 
 private:
+    /**
+     * @brief Expected value of _table.
+     * 
+     * @return double 
+     */
     double _E() {
         double expected_value = 0;
         for (auto i : table()) {
@@ -43,6 +72,10 @@ private:
         return expected_value;
     }
 
+    /**
+     * @brief Testing samples.
+     * 
+     */
     void sample_test() {
         longint* array = new longint[_sampleSize];
 
@@ -104,6 +137,11 @@ public:
         return _E();
     }
 
+    /**
+     * @brief Transform probability _table with counts to frequency.
+     * 
+     * @return map<longint, double> 
+     */
     map<longint, double> table() {
         map<longint, double> table;
 
@@ -116,6 +154,9 @@ public:
 };
 
 int main() {
+
+    // This code took a very-long time to finished.
+
     try {
         Testing a(1000000, 10, 10);
             
