@@ -6,6 +6,7 @@
 
 #include<bits/stdc++.h>
 #define longint int64_t
+#define TIMING
 using namespace std;
 
 template<class T>
@@ -80,8 +81,7 @@ private:
         longint* array = new longint[_sampleSize];
 
         // For unique element.
-        bool* existed = new bool[_maxValue];
-        memset(existed, 0, _maxValue * sizeof(bool));
+        bool* existed = new bool[_maxValue]();
 
         // Create random array
         for (int i = 0; i < _sampleSize; ++i) {
@@ -154,6 +154,10 @@ public:
 };
 
 int main() {
+    #ifdef TIMING
+        chrono::steady_clock clock;
+        auto start = clock.now();
+    #endif
 
     // This code took a very-long time to finished.
 
@@ -171,6 +175,11 @@ int main() {
         cout << e.what() << endl;
     }
     
-
+    #ifdef TIMING
+        auto end = clock.now();
+        chrono::duration<double> diff = end - start;
+        cout << "----------------" << '\n';
+        cout << "Execution time: " << diff.count() << '\n';
+    #endif
     return 0;
 }
