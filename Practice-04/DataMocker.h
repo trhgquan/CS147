@@ -5,43 +5,85 @@
 #include <time.h>
 #include <iostream>
 #include <vector>
+
 #include "Sort.h"
+#include "ElementWrapper.h"
 
 template<class T>
 class DataMocker {
 
 private:
-	static const int MAX_SIZE = 20;
-	static const int REP = 100000;
+	static const int MIN_SIZE = 5;
+	static const int MAX_SIZE = 30;
+	static const int REP = 1;
+	static const int STEP = 5;
 	static bool _isSeeded;
 
 private:
 	std::vector<AbstractSort<T>*> prototypes;
-	std::vector<int> sizes = { 5, 10, MAX_SIZE};
-	T arr[MAX_SIZE + 1];
+	//std::vector<int> sizes = { 5 };
+	ElementWrapper<int> _arr[MAX_SIZE + 1];
+	double** _inversionTable;
+
+private:
+	void _resetInversionTable(int size) {
+		for (int i = 0; i < size; ++i) {
+			memset(_inversionTable[i], 0, sizeof(double)*size);
+		}
+	}
+
+	void _getAVGInversionTable(int size) {
+		for (int i = 0; i < size; ++i) {
+			for (int j = 0; j < size; ++j) {
+				_inversionTable[i][j] /= REP;
+			}
+		}
+	}
+
+	void _printInversionTable(int size) {
+		for (int i = 0; i < size; ++i) {
+			printf("- Lan %d: ", i);
+			for (int j = 0; j < size; ++j) 
+			{
+				printf("%0.2f; ", _inversionTable[i][j]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
 
 public:
 
 	void run() {
 		for (AbstractSort<T>* algor: prototypes) {
-
-			for (int size : sizes) {
-				double avgValue = 0;
-				printf("[sort = %s, size = %d, res = ", algor->name().c_str(), size);
+			algor->setArray(_arr);
+			algor->setInversionTable(_inversionTable);
+			for (int size = MIN_SIZE; size <= MAX_SIZE; size += STEP ) {
+				double avgSwapCount = 0;
+				algor->setSize(size);
+				_resetInversionTable(size);
+				
 				for (int i = 0; i < REP; ++i) {
 
 					//randomize array
-					for (int i = 0; i < size; ++i) 
+					for (int i = 0; i < size; ++i)
 					{
-						arr[i] = rand();
+						_arr[i].setValue(rand());
 					}
 
 					//sort
-					//printf("Finish i = %d\n", i);	//log
-					avgValue += algor->sort(arr, size);
+					
+					/*avgValue += algor->sort();*/
+					avgSwapCount += algor->sort();
+					//printf("\tSwap count: %d\n\n", algor->swapCount());
 				}
+				avgSwapCount /= REP;
+				printf("[sort = %s, size = %d, rep = %d, AVG swap = %0.2f]\n", algor->name().c_str(), size, REP, avgSwapCount);
+				_getAVGInversionTable(size);
+				_printInversionTable(size); printf("\n");
+				//printf("%f]\n", (double)avgValue / REP);
 
-				printf("%f]\n", (double)avgValue / REP);
+				
 			}
 
 			
@@ -56,8 +98,13 @@ public:
 			_isSeeded = true;
 		}
 
-		prototypes.push_back(new BubbleSort<T>());
-		prototypes.push_back(new InsertionSort<T>());
+		_inversionTable = new double*[MAX_SIZE + 2];
+		for (int i = 0; i < MAX_SIZE + 2; ++i) {
+			_inversionTable[i] = new double[MAX_SIZE + 2];
+		}
+
+		//prototypes.push_back(new BubbleSort<T>());
+		//prototypes.push_back(new InsertionSort<T>());
 		prototypes.push_back(new SelectionSort<T>());
 	}
 
@@ -67,6 +114,17 @@ public:
 				delete algor;
 			}
 		}
+
+		if (_inversionTable) {
+			for (int i = 0; i < MAX_SIZE + 2; ++i) {
+				if (_inversionTable[i])
+				{
+					delete[] _inversionTable[i];
+				}
+			}
+			delete[] _inversionTable;
+		}
+
 	}
 };
  
