@@ -13,8 +13,8 @@ template<class T>
 class DataMocker {
 
 private:
-	static const int MIN_SIZE = 5;
-	static const int MAX_SIZE = 30;
+	static const int MIN_SIZE = 30;
+	static const int MAX_SIZE = 100;
 	static const int REP = 1;
 	static const int STEP = 5;
 	static bool _isSeeded;
